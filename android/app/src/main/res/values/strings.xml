@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Аркада</string>
+    <string name="title_activity_main">Аркада</string>
+    <string name="package_name">com.pixelarcade.classics</string>
+    <string name="custom_url_scheme">com.pixelarcade.classics</string>
+</resources>

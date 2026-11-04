@@ -1,0 +1,18 @@
+{
+  "name": "arcada-classics",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Five classic games in one offline-friendly web app and Android APK.",
+  "type": "module",
+  "scripts": {
+    "android:sync": "cap sync android",
+    "android:build": "npm run android:sync && cd android && ./gradlew --no-daemon assembleDebug"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.6.0",
+    "@capacitor/core": "^8.6.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.6.0"
+  }
+}

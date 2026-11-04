@@ -1,0 +1,8 @@
+{
+  "appId": "com.pixelarcade.classics",
+  "appName": "Аркада",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  }
+}

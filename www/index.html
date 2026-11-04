@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#171a2d">
+  <meta name="description" content="Пять классических игр в одной бесплатной мини-аркаде: PAC-MAN, Змейка, пасьянс, сапёр и Block Blast.">
+  <meta name="color-scheme" content="light">
+  <link rel="icon" href="./assets/arcade-icon.svg" type="image/svg+xml">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="stylesheet" href="./styles.css">
+  <title>Аркада — пять классических игр</title>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="./" aria-label="Аркада — на главную">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 40 40" role="img">
+            <rect x="3" y="3" width="34" height="34" rx="12" fill="currentColor" />
+            <path d="M21 10a10 10 0 1 0 9 14L20 20l10-4a10 10 0 0 0-9-6Z" fill="#171a2d" />
+            <circle cx="25.5" cy="14.5" r="1.4" fill="#fff4c7" />
+          </svg>
+        </span>
+        <span class="brand-copy"><strong>АРКАДА</strong><small>ИГРЫ НА КАЖДЫЙ ДЕНЬ</small></span>
+      </a>
+      <nav class="top-nav" aria-label="Главная навигация">
+        <button class="nav-link is-active" id="home-nav" type="button">Игротека</button>
+        <a class="nav-download" id="apk-link" href="https://github.com/dimasik1325/3787752557885325677854522577/releases/download/android-latest/pixel-arcade-android.apk" aria-label="Скачать APK для Android">
+          <span class="download-icon" aria-hidden="true">↓</span><span>APK для Android</span>
+        </a>
+        <button class="install-button" id="install-button" type="button" hidden>Установить</button>
+      </nav>
+    </header>
+
+    <main>
+      <section class="screen home-screen" id="home-screen">
+        <section class="hero" aria-labelledby="hero-title">
+          <div class="hero-copy">
+            <div class="eyebrow"><span class="eyebrow-dot"></span> ПЯТЬ ЛЕГЕНДАРНЫХ ИГР · БЕСПЛАТНО</div>
+            <h1 id="hero-title">Маленькая<br><span>игротека.</span><br>Большой азарт.</h1>
+            <p class="hero-description">PAC-MAN, Змейка, пасьянс, сапёр и Block Blast — знакомая классика, которая всегда под рукой.</p>
+            <div class="hero-actions">
+              <a class="button button-primary" href="#games" id="play-now">Выбрать игру <span aria-hidden="true">↘</span></a>
+              <a class="button button-quiet" href="https://github.com/dimasik1325/3787752557885325677854522577/releases/download/android-latest/pixel-arcade-android.apk" id="hero-apk">Скачать APK <span aria-hidden="true">↓</span></a>
+            </div>
+            <div class="hero-footnote"><span class="online-dot"></span> Работает офлайн после первого запуска</div>
+          </div>
+          <div class="hero-art" aria-hidden="true">
+            <div class="art-orbit orbit-one"></div><div class="art-orbit orbit-two"></div>
+            <div class="art-bubble bubble-one">+ 250</div><div class="art-bubble bubble-two">УРОВЕНЬ 01</div>
+            <div class="arcade-machine">
+              <div class="machine-top"><span></span><span></span><span></span></div>
+              <div class="machine-screen">
+                <div class="screen-pac"></div>
+                <i class="screen-dot dot-a"></i><i class="screen-dot dot-b"></i><i class="screen-dot dot-c"></i>
+                <div class="screen-ghost"><b></b><b></b></div>
+              </div>
+              <div class="machine-controls"><i></i><i></i><i></i><span></span></div>
+              <div class="machine-base"></div>
+            </div>
+            <span class="art-star star-one">✦</span><span class="art-star star-two">✳</span>
+            <span class="art-caption">ВКЛЮЧАЙСЯ<br>В ЛЮБУЮ МИНУТУ</span>
+          </div>
+          <div class="hero-bottom-note"><span>01—05</span><span>ВЫБЕРИ СВОЙ РИТМ</span><span>↓</span></div>
+        </section>
+
+        <section class="library-section" id="games" aria-labelledby="games-title">
+          <div class="section-heading">
+            <div>
+              <div class="eyebrow eyebrow-dark"><span class="eyebrow-dot"></span> КОЛЛЕКЦИЯ</div>
+              <h2 id="games-title">Что сыграем?</h2>
+            </div>
+            <p>Пять проверенных временем игр.<br>Выбирай и начинай сразу.</p>
+          </div>
+          <div class="game-grid" id="game-grid" aria-live="polite"></div>
+        </section>
+
+        <section class="download-banner" aria-label="Скачать приложение">
+          <div class="download-badge" aria-hidden="true">✦</div>
+          <div class="download-copy"><strong>В кармане — целая аркада.</strong><span>Установи APK на Android или добавь сайт на главный экран.</span></div>
+          <a class="button button-light" href="https://github.com/dimasik1325/3787752557885325677854522577/releases/download/android-latest/pixel-arcade-android.apk" id="banner-apk">Скачать APK <span aria-hidden="true">↗</span></a>
+        </section>
+      </section>
+
+      <section class="screen game-screen" id="game-screen" hidden aria-labelledby="game-title">
+        <div class="game-heading">
+          <button class="back-button" id="back-button" type="button"><span aria-hidden="true">←</span> Все игры</button>
+          <div class="game-title-wrap">
+            <div class="eyebrow eyebrow-dark" id="game-kicker">АРКАДА · ИГРА 01</div>
+            <h1 id="game-title">Игра</h1>
+          </div>
+          <button class="button button-small button-outline" id="restart-button" type="button"><span aria-hidden="true">↻</span> Новая игра</button>
+        </div>
+        <div class="game-layout">
+          <section class="play-panel" aria-label="Игровое поле">
+            <div class="game-toolbar" id="game-controls"></div>
+            <div class="game-host" id="game-host"></div>
+          </section>
+          <aside class="game-sidebar">
+            <div class="sidebar-card" id="game-info"></div>
+            <div class="sidebar-note"><span class="note-icon" aria-hidden="true">⌘</span><p>Прогресс и рекорды хранятся только на этом устройстве.</p></div>
+          </aside>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <a class="footer-brand" href="./">АРКАДА<span> · классика всегда с тобой</span></a>
+      <div class="footer-meta"><span>5 ИГР</span><span class="footer-separator">✳</span><span>БЕСПЛАТНО</span><span class="footer-separator">✳</span><span>ОФЛАЙН</span></div>
+    </footer>
+  </div>
+
+  <noscript><div class="noscript-note">Для запуска игр включите JavaScript в настройках браузера.</div></noscript>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

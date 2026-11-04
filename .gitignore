@@ -1,0 +1,16 @@
+# JavaScript dependencies
+node_modules/
+
+# Android/Gradle generated files
+android/.gradle/
+android/local.properties
+android/**/build/
+android/captures/
+android/.idea/
+*.jks
+*.keystore
+
+# OS/editor files
+.DS_Store
+.idea/
+.vscode/
