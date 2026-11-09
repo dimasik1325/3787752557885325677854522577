@@ -82,8 +82,8 @@ export class GameRenderer {
 
   setRenderDistance(distance) {
     this.lastRenderDistance = distance;
-    const far = Math.max(60, distance * CHUNK_SIZE * 0.92);
-    this.scene.fog.near = far * 0.45;
+    const far = Math.max(70, distance * CHUNK_SIZE * 1.02);
+    this.scene.fog.near = far * 0.55;
     this.scene.fog.far = far;
     this.camera.far = 1200;
     this.camera.updateProjectionMatrix();
@@ -128,8 +128,8 @@ export class GameRenderer {
           vec3 col = mix(bottomColor, topColor, pow(h, 0.85));
 
           float d = dot(normalize(vWorldDir), normalize(sunDir));
-          float glow = pow(max(d, 0.0), 8.0) * 0.35;
-          float disc = smoothstep(0.9975, 0.9990, d);
+          float glow = pow(max(d, 0.0), 5.0) * 0.45;
+          float disc = smoothstep(0.9970, 0.9990, d);
           float moon = smoothstep(0.9979, 0.9992, -d);
           col += sunColor * (glow * sunStrength);
           col += vec3(1.0, 0.96, 0.85) * disc * sunStrength * 1.6;
@@ -556,19 +556,22 @@ export class GameRenderer {
 
     const dayTop = new THREE.Color(0x3f86dd);
     const dayBottom = new THREE.Color(0xcfe9ff);
-    const duskTop = new THREE.Color(0x2a3f7a);
-    const duskBottom = new THREE.Color(0xff9f5a);
+    const duskTop = new THREE.Color(0x2d3f86);
+    const duskBottom = new THREE.Color(0xff9a52);
     const nightTop = new THREE.Color(0x050a18);
     const nightBottom = new THREE.Color(0x101a33);
 
-    const dusk = Math.max(0, 1 - Math.abs(height) * 3.2) * (height > -0.3 ? 1 : 0);
-    const top = nightTop.clone().lerp(dayTop, dayFactor).lerp(duskTop, dusk * 0.6);
-    const bottom = nightBottom.clone().lerp(dayBottom, dayFactor).lerp(duskBottom, dusk * 0.75);
+    const dusk = Math.max(0, 1 - Math.abs(height) * 2.6) * (height > -0.36 ? 1 : 0);
+    const top = nightTop.clone().lerp(dayTop, dayFactor).lerp(duskTop, dusk * 0.9);
+    const bottom = nightBottom.clone().lerp(dayBottom, dayFactor).lerp(duskBottom, dusk * 1.0);
+    // на закате горизонт светлее, чем «ночной» — иначе сцена выглядит грязной
+    const duskGlow = new THREE.Color(0xffb066);
+    bottom.lerp(duskGlow, dusk * 0.6);
 
     this.skyUniforms.topColor.value.copy(top);
     this.skyUniforms.bottomColor.value.copy(bottom);
 
-    const fogColor = bottom.clone().lerp(top, 0.28);
+    const fogColor = bottom.clone().lerp(top, 0.28 - dusk * 0.1);
     if (underwater) {
       fogColor.setHex(0x2a5fa8).lerp(new THREE.Color(0x1b3f78), 0.5);
     }
@@ -576,14 +579,20 @@ export class GameRenderer {
     this.renderer.setClearColor(fogColor);
     this.sky.position.set(playerPos.x, 0, playerPos.z);
     this.stars.position.set(playerPos.x, 0, playerPos.z);
-    this.stars.material.opacity = clamp(nightFactor * 1.4 - 0.35, 0, 1);
+    this.stars.material.opacity = clamp(nightFactor * 1.6 - 0.75, 0, 1);
 
     this.clouds.position.x = playerPos.x;
     this.clouds.position.z = playerPos.z;
     this.cloudOffset += dt * 0.0018;
     this.cloudTex.offset.x = this.cloudOffset;
-    this.cloudMaterial.opacity = 0.15 + dayFactor * 0.65;
-    this.cloudMaterial.color.setRGB(0.5 + dayFactor * 0.5, 0.5 + dayFactor * 0.5, 0.55 + dayFactor * 0.45);
+    const duskTint = clamp(dusk * 1.15, 0, 1);
+    this.cloudMaterial.opacity = 0.12 + dayFactor * 0.72;
+    const cb = 0.24 + dayFactor * 0.76;
+    this.cloudMaterial.color.setRGB(
+      clamp(cb * (1 + duskTint * 0.55), 0, 1),
+      clamp(cb * (1 - duskTint * 0.02), 0, 1),
+      clamp(cb * (0.98 - duskTint * 0.42), 0, 1)
+    );
 
     // Дневной свет мира (лунная ночь — чуть синеватая, но не чёрная)
     const brightness = 0.27 + dayFactor * 0.73;

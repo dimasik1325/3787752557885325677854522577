@@ -55,10 +55,20 @@ npm run preview
 - **Сохранение мира** в localStorage (сид, изменения блоков, инвентарь, время, позиция).
 - **Процедурные звуки** на WebAudio: шаги по разным материалам, разрушение, взрыв, всплеск.
 
-![Инвентарь](screenshots/inventory.png)
-![Горы](screenshots/mountains.png)
-![Пустыня](screenshots/desert.png)
-![Ночь](screenshots/night.png)
+### Скриншоты
+
+| | |
+| --- | --- |
+| ![Вид сверху](screenshots/aerial.png) | ![Закат](screenshots/sunset.png) |
+| Вид с высоты: река, лес, туман | Закат над рекой |
+| ![Ночь](screenshots/night.png) | ![Пещера](screenshots/cave-torches.png) |
+| Ночь с факелами и звёздами | Пещера, освещённая факелами |
+| ![Меню](screenshots/menu.png) | ![Крафт](screenshots/craft.png) |
+| Стартовое меню | Крафт и материалы |
+| ![Горы](screenshots/mountains.png) | ![Пустыня](screenshots/desert.png) |
+| Горный биом | Пустыня с кактусами |
+| ![Атлас](screenshots/atlas.png) | ![Карта](screenshots/world-map.png) |
+| Процедурный атлас текстур | Карта мира (генератор) |
 
 ## Управление
 
@@ -117,11 +127,12 @@ src/
 В репозитории есть автотесты движка и браузерные тесты (Playwright):
 
 ```bash
-node tests/engine.test.mjs      # генерация, мешер, физика, рейкасты
-node tests/light.test.mjs       # распространение света (см. tests/light.mjs)
+npm test                        # генерация, мешер, физика, статистика мира
+node tests/light.mjs            # распространение света от факелов
 node tests/map.mjs 1337         # карта мира сверху -> tests/out/map_1337.png
 node tests/browser.mjs          # запуск игры в headless Chromium
 node tests/interact.mjs         # ломание/установка, крафт, мобы, ТНТ, смерть, сохранение
+node tests/items.mjs            # выброс/подбор предметов, выталкивание, ИИ зомби
 ```
 
 Для браузерных тестов нужен Chromium (в песочнице используется `@sparticuz/chromium`

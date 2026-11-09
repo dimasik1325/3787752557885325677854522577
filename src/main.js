@@ -971,11 +971,16 @@ class Game {
     const existing = this.world.getBlock(px, py, pz);
     if (existing !== AIR && !getBlock(existing).liquid) return;
 
-    // Нельзя ставить блок «в себя»
+    // Блок не должен оказаться внутри игрока — если так, выталкиваем игрока вверх
+    let pushed = false;
     if (this.intersectsPlayer(px, py, pz)) {
-      this.ui.toast('Здесь стоите вы');
-      return;
+      if (this.tryPushPlayerUp(px, py, pz)) pushed = true;
+      else {
+        this.ui.toast('Здесь стоите вы');
+        return;
+      }
     }
+    void pushed;
 
     // Растения можно ставить только на землю
     if (def.cross) {
@@ -991,6 +996,29 @@ class Game {
       this.updateHeldItem();
     }
     this.afterBlockChange(px, py, pz);
+  }
+
+  /** Пытается «выдавить» игрока из блока вверх (как в Minecraft) */
+  tryPushPlayerUp(x, y, z) {
+    const p = this.player;
+    for (let step = 1; step <= 2; step++) {
+      const ny = p.position.y + step;
+      if (!this.intersectsPlayerAt(x, y, z, p.position.x, ny, p.position.z) && !p.collides(p.position.x, ny, p.position.z)) {
+        p.position.y = ny;
+        p.fallStartY = ny;
+        return true;
+      }
+    }
+    return false;
+  }
+
+  intersectsPlayerAt(x, y, z, px, py, pz) {
+    const half = 0.3;
+    return (
+      px + half > x && px - half < x + 1 &&
+      py + PLAYER_HEIGHT > y && py < y + 1 &&
+      pz + half > z && pz - half < z + 1
+    );
   }
 
   intersectsPlayer(x, y, z) {
@@ -1485,6 +1513,7 @@ class Game {
 
   /** Автоматически снижает дальность прорисовки на слабых машинах */
   adaptQuality() {
+    if (this.adaptiveQuality === false) return;
     if (!this.running || this.paused) {
       this.lowFpsFrames = 0;
       return;
