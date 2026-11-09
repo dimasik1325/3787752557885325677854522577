@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <title>Minecraft Web — воксельная песочница</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' fill='%235f9c36'/><rect y='6' width='16' height='10' fill='%238b5a3c'/></svg>" />
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <canvas id="game"></canvas>
+
+    <!-- HUD -->
+    <div id="hud" class="hidden">
+      <div id="crosshair"><div class="ch-line ch-h"></div><div class="ch-line ch-v"></div></div>
+      <div id="debug-panel" class="hidden">
+        <div>FPS: <span id="dbg-fps">0</span></div>
+        <div>XYZ: <span id="dbg-pos">0 0 0</span></div>
+        <div>Биом: <span id="dbg-biome">—</span></div>
+        <div>Блок: <span id="dbg-block">—</span></div>
+        <div>Чанки: <span id="dbg-chunks">0</span></div>
+        <div>Время: <span id="dbg-time">06:00</span></div>
+        <div>Режим: <span id="dbg-mode">выживание</span></div>
+      </div>
+
+      <div id="vitals">
+        <div id="hearts" class="row"></div>
+        <div id="bubbles" class="row"></div>
+      </div>
+
+      <div id="hotbar-wrap">
+        <div id="hotbar"></div>
+        <div id="selected-label"></div>
+      </div>
+
+      <div id="hint">ЛКМ — сломать · ПКМ — поставить · E — инвентарь · F — полёт · ESC — меню</div>
+      <div id="toast-stack"></div>
+      <div id="damage-vignette"></div>
+      <div id="water-overlay"></div>
+      <div id="mining-progress"><div id="mining-bar"></div></div>
+    </div>
+
+    <!-- Стартовое меню -->
+    <div id="start-screen" class="screen">
+      <div class="menu-bg"></div>
+      <div class="menu-inner">
+        <h1 class="title">MINECRAFT<span>WEB</span></h1>
+        <p class="subtitle">Воксельная песочница · бесконечный мир · полная свобода</p>
+
+        <div class="panel">
+          <label class="field">
+            <span>Сид мира</span>
+            <input id="seed-input" type="text" value="1337" maxlength="24" />
+          </label>
+          <div class="field">
+            <span>Режим игры</span>
+            <div class="segmented" id="mode-select">
+              <button data-mode="survival" class="active">Выживание</button>
+              <button data-mode="creative">Креатив</button>
+            </div>
+          </div>
+          <button id="start-btn" class="btn btn-primary">Играть</button>
+          <button id="continue-btn" class="btn hidden">Продолжить сохранение</button>
+        </div>
+
+        <div class="controls-grid">
+          <div><b>WASD</b> движение</div>
+          <div><b>Пробел</b> прыжок / вверх</div>
+          <div><b>Shift</b> присесть / вниз</div>
+          <div><b>Ctrl</b> бег</div>
+          <div><b>F</b> режим полёта</div>
+          <div><b>E</b> инвентарь и крафт</div>
+          <div><b>F3</b> отладка</div>
+          <div><b>F5</b> вид от 3-го лица</div>
+        </div>
+        <p class="footnote">Мир генерируется процедурно: биомы, пещеры, руды, деревья. Прогресс сохраняется автоматически.</p>
+      </div>
+    </div>
+
+    <!-- Пауза -->
+    <div id="pause-screen" class="screen hidden">
+      <div class="menu-bg"></div>
+      <div class="menu-inner">
+        <h2 class="title small">ПАУЗА</h2>
+        <div class="panel">
+          <button id="resume-btn" class="btn btn-primary">Продолжить</button>
+          <button id="settings-btn" class="btn">Настройки</button>
+          <button id="save-btn" class="btn">Сохранить мир</button>
+          <button id="new-world-btn" class="btn">Новый мир</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Настройки -->
+    <div id="settings-screen" class="screen hidden">
+      <div class="menu-bg"></div>
+      <div class="menu-inner">
+        <h2 class="title small">НАСТРОЙКИ</h2>
+        <div class="panel wide">
+          <label class="field slider">
+            <span>Дальность прорисовки: <b id="rd-value">6</b> чанков</span>
+            <input id="rd-input" type="range" min="3" max="12" step="1" value="6" />
+          </label>
+          <label class="field slider">
+            <span>Чувствительность мыши: <b id="sens-value">1.0</b></span>
+            <input id="sens-input" type="range" min="0.2" max="3" step="0.1" value="1" />
+          </label>
+          <label class="field slider">
+            <span>Угол обзора: <b id="fov-value">72</b>°</span>
+            <input id="fov-input" type="range" min="50" max="110" step="1" value="72" />
+          </label>
+          <label class="field slider">
+            <span>Громкость: <b id="vol-value">55</b>%</span>
+            <input id="vol-input" type="range" min="0" max="100" step="5" value="55" />
+          </label>
+          <label class="field checkbox">
+            <span>Показывать отладочную панель (F3)</span>
+            <input id="debug-input" type="checkbox" />
+          </label>
+          <button id="settings-back" class="btn btn-primary">Готово</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Инвентарь -->
+    <div id="inventory-screen" class="screen hidden">
+      <div class="menu-bg transparent"></div>
+      <div class="inventory-window">
+        <div class="inv-header">
+          <h2>Инвентарь</h2>
+          <div class="inv-tabs">
+            <button class="inv-tab active" data-tab="inventory">Инвентарь</button>
+            <button class="inv-tab" data-tab="craft">Крафт</button>
+            <button class="inv-tab" data-tab="creative">Все блоки</button>
+          </div>
+          <button id="inv-close" class="btn small">✕</button>
+        </div>
+
+        <div id="inv-tab-inventory" class="inv-pane">
+          <div class="inv-grid" id="inv-main"></div>
+          <div class="inv-hotbar-row">
+            <div class="inv-grid hot" id="inv-hotbar"></div>
+          </div>
+          <p class="inv-hint">Клик — взять/положить стак. В креативе блоки бесконечны.</p>
+        </div>
+
+        <div id="inv-tab-craft" class="inv-pane hidden">
+          <div class="craft-layout">
+            <div>
+              <h3>Рецепты</h3>
+              <div id="recipe-list" class="recipe-list"></div>
+            </div>
+            <div>
+              <h3>В руках</h3>
+              <div class="craft-hand">
+                <div id="cursor-item" class="cursor-item"></div>
+                <div class="craft-arrow">→</div>
+                <div id="craft-result" class="craft-result">Выбери рецепт</div>
+              </div>
+              <p class="inv-hint">Скрафченное отправится в инвентарь.</p>
+              <h3>Материалы</h3>
+              <div id="materials" class="materials"></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="inv-tab-creative" class="inv-pane hidden">
+          <div id="creative-grid" class="creative-grid"></div>
+          <p class="inv-hint">Клик по блоку — положить в выбранный слот хотбара.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Смерть -->
+    <div id="death-screen" class="screen hidden">
+      <div class="death-overlay"></div>
+      <div class="menu-inner">
+        <h2 class="title small death">ВЫ ПОГИБЛИ</h2>
+        <p class="subtitle" id="death-cause">Мир оказался сильнее.</p>
+        <div class="panel">
+          <button id="respawn-btn" class="btn btn-primary">Возродиться</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Загрузка -->
+    <div id="loading-screen" class="screen hidden">
+      <div class="menu-bg"></div>
+      <div class="menu-inner">
+        <h2 class="title small">ГЕНЕРАЦИЯ МИРА…</h2>
+        <div class="loader"><div class="loader-bar" id="loader-bar"></div></div>
+        <p class="subtitle" id="loader-text">Создаём ландшафт, пещеры и руды</p>
+      </div>
+    </div>
+
+    <div id="mobile-note" class="hidden">Для игры нужна клавиатура и мышь 🖱️</div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

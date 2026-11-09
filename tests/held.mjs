@@ -1,0 +1,17 @@
+import { chromium as pw } from 'playwright-core';
+import chromium from '@sparticuz/chromium';
+const exe = await chromium.executablePath();
+const browser = await pw.launch({ executablePath: exe, args: [...chromium.args,'--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader','--no-sandbox'], headless: true, env: { ...process.env, LD_LIBRARY_PATH: '/tmp/al/lib:/tmp' } });
+const page = await browser.newPage({ viewport: { width: 900, height: 560 } });
+page.on('pageerror', e => console.log('ERR', e.message));
+await page.goto('http://localhost:5173/', { waitUntil: 'networkidle' });
+await page.click('#start-btn');
+await page.waitForTimeout(6000);
+await page.evaluate(() => { const g = window.__game; g.player.pitch = -0.15; g.ui.setSelected(0); g.renderer.swingTimer = 1; });
+await page.waitForTimeout(700);
+await page.screenshot({ path: 'tests/out/held_block.png' });
+await page.evaluate(() => { const g = window.__game; g.inventory.slots[0] = null; g.ui.refreshHotbar(); g.updateHeldItem(); g.renderer.swingTimer = 1; });
+await page.waitForTimeout(700);
+await page.screenshot({ path: 'tests/out/held_arm.png' });
+console.log('ok');
+await browser.close();

@@ -1,0 +1,19 @@
+{
+  "name": "minecraft-web",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Minecraft-клон в браузере на Three.js: бесконечный процедурный воксельный мир",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0 --port 5173",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0 --port 4173",
+    "test": "node tests/engine.test.mjs && node tests/worldscan.mjs"
+  },
+  "dependencies": {
+    "three": "^0.187.0"
+  },
+  "devDependencies": {
+    "vite": "^8.3.7"
+  }
+}
